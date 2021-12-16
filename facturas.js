@@ -1,9 +1,13 @@
 $(document).ready(function (){
 
     //función para completar el campo precio total antes de aplicar el descuento
+
+    //
     $("#precio-unitario").keyup(function (Event){
 
         let precioTotal = ($('#cantidad').val() * $('#precio-unitario').val());
+
+        precioTotal = precioTotal.toFixed(2);
             
         $('#total-linea').val(precioTotal);
             
@@ -14,8 +18,10 @@ $(document).ready(function (){
 
             $("#descuento").mouseleave(function (Event){
 
-                let precioTotal = ($('#cantidad').val() * $('#precio-unitario').val()) * (($('#descuento').val()) / 100);
+                let precioTotal = ($('#cantidad').val() * $('#precio-unitario').val()) - ($('#cantidad').val() * $('#precio-unitario').val()) * (($('#descuento').val()) / 100);
                 
+                precioTotal = precioTotal.toFixed(2);
+
                 $('#total-linea').val(precioTotal);
                 
                 Event.preventDefault();
@@ -26,6 +32,8 @@ $(document).ready(function (){
         if($('#descuento').val() == ''){
 
             let precioTotal = ($('#cantidad').val() * $('#precio-unitario').val());
+
+            precioTotal = precioTotal.toFixed(2);
            
             $('#total-linea').val(precioTotal);
             
@@ -46,7 +54,15 @@ $(document).ready(function (){
 
        
         //agrega la id que se utilizará para modificar todos los descuentos
-        $("tbody > tr > td:nth-last-child(3)").attr("id","des-total");
+        $("tbody > tr:last-of-type > td:nth-last-child(3)").attr("id","des-total");
+
+        $("tbody > tr:last-of-type > td:nth-last-child(2)").attr("id","recal");
+
+        $("tbody > tr:last-of-type > td:nth-last-child(4)").attr("id","recal-precio");
+
+        $("tbody > tr:last-of-type > td:nth-last-child(5)").attr("id","recal-cantidad");
+
+        $("tbody > tr:last-of-type").attr("id","global");
 
         //fución al pulsar botón, borra la fila en la que se encuentra dicho botón
         $(document).on('click', '#borrar', function (event) {
@@ -60,7 +76,7 @@ $(document).ready(function (){
             $("tbody > tr > td:nth-last-child(2)").each(function() {
                 sum += Number($(this).text());
             });
-
+                sum = sum.toFixed(2);
             $("#base-imponible").text(sum);
             
             //Recalcular IVA
@@ -71,10 +87,19 @@ $(document).ready(function (){
 
                 iva = porcen * 0.21;
             });
+            iva = iva.toFixed(2);
             $("#iva").text(iva);
 
-            //Recualcular TOTAL
-            $("#total").text(iva + sum);
+            //Recalcular TOTAL
+
+            sum = parseFloat(sum);
+            iva = parseFloat(iva);
+           
+            let total = sum + iva;
+
+            total = total.toFixed(2);
+           
+            $("#total").text(total);
             
         });
 
@@ -96,8 +121,9 @@ $(document).ready(function (){
 
         $("tbody > tr > td:nth-last-child(2)").each(function() {
             sum += Number($(this).text());
-        });
 
+        });
+        sum = sum.toFixed(2);
         $("#base-imponible").text(sum);
 
         Event.preventDefault();
@@ -108,12 +134,21 @@ $(document).ready(function (){
         $("tbody > tr > td:nth-last-child(2)").each(function() {
             porcen += Number($(this).text());
 
-            iva = porcen * 0.21;
+            iva = (porcen * 0.21);
         });
+        iva = iva.toFixed(2);
          $("#iva").text(iva);
 
          //cálculo total
-         $("#total").text(iva + sum);
+        
+         sum = parseFloat(sum);
+         iva = parseFloat(iva);
+
+         let total = sum + iva;
+
+         total = total.toFixed(2);
+        
+         $("#total").text(total);
 
     });
     
@@ -137,11 +172,36 @@ $(document).ready(function (){
      
     $("#aplicarDescuento").click(function(Event){
 
-        $("#des-total td").each(function() {
-            alert($(this).val());
+        
+        $("tbody > tr").each(function() {
+            
+            $("tbody > tr > td#des-total").text($("#descuento-lineas").val());
+
+            let recantidad = $('#recal-cantidad').text();
+
+            recantidad = parseFloat(recantidad);
+
+           let reprecio = $('#recal-precio').text();
+
+           reprecio = parseFloat(reprecio);
+
+           let retotal = $('#des-total').text();
+
+           retotal = parseFloat(retotal);
+
+            let recal = (recantidad * reprecio) - (recantidad * reprecio) * (retotal / 100);
+
+            $('#recal').text(recal);
+            
         });
 
+        
+
         Event.preventDefault();
+
+        
+
+
     });  
 
     
